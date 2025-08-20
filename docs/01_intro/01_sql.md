@@ -1,101 +1,104 @@
-# SQL with SQLite
+# Getting Started with SQL using SQLite
 
-   - Learn how to work with SQL using SQLite locally. This tutorial will focus on creating, querying, and managing a simple database.
+   - This chapter focuses on introducing you to SQL basics, utilizing SQLite as the database management system. SQLite is a C programming library that provides a lightweight and embeddable relational database engine.
 
    ## Goal of this lesson:
 
-   - Understand basic SQL syntax
-   - Create tables and manage data in SQLite
-   - Query data from created tables
-   - Understand relationships between tables
+   - Understand the fundamentals of SQL and its syntax.
+   - Learn how to create tables, insert data, query data, and perform basic operations in SQLite.
+   - Familiarize yourself with creating and managing relationships between tables.
 
    ---
 
-   ## Use the default demo.db
+   ## Using the default demo.db
 
-   - This tutorial uses the `demo.db` SQLite database for practical examples. It has four main tables: customers, products, orders, and order_items.
+   - In this tutorial, we will use an SQLite database called `demo.db`. This database includes four tables: customers, products, orders, and order_items.
+
      - customers: `id`, `name`, `email`, `created_at`
      - products: `id`, `name`, `price`, `stock`
-     * orders: `id`, `customer_id` (references customers), `order_date`
-     * order_items: `id`, `order_id` (references orders), `product_id` (references products), `quantity`, `price`
-   - A **customer** has many **orders**. An **order** has many **items**. Each **item** belongs to one **product**.
-   - Visualize relationships with mermaid.js:
+     - orders: `id`, `customer_id` → customers, `order_date`
+     - order_items: `id`, `order_id` → orders, `product_id` → products, `quantity`, `price`
 
-      ```mermaid
-      erDiagram
-        Customer ||--o{ Order : has_one
-        Order ||--|{ OrderItem : has_many
-        Product ||--|{ OrderItem : belongs_to
-      ```
+   - In this database, a **customer** has many **orders**, an **order** has many **items**, and each **item** belongs to one **product**. A visualization of the relationships can be seen below using mermaid.js:
+
+     ```mermaid
+     graph LR
+      A[Customers] --|> B{Orders}
+      B --> C[Order Items]
+      C --|> D[Products]
+     ```
 
    ---
 
    ## How it works
 
-   - Start by creating tables for customers, products, orders, and order items.
-   - Insert data into the tables.
-   - Query the data from the tables using SELECT statements.
-     - Filter results with WHERE clause.
-     - Sort results with ORDER BY clause.
-     - Limit the number of rows returned with LIMIT clause.
-   - Learn about JOIN statements to combine data from multiple tables.
-     - INNER JOIN to return only matching rows.
-     - LEFT JOIN to return all left-table rows, even if there are no matching right-table rows.
-   - Use aggregate functions like SUM, AVG, COUNT, and GROUP BY to analyze data.
+   - Step 1: Create a new SQLite database using the `sqlite3` command-line tool.
+     ```
+     $ sqlite3 demo.db
+     ```
+   - Step 2: Navigate to the desired table and list its contents with the `SELECT` statement.
+     ```
+     sqlite> SELECT * FROM customers;
+     ```
+   - Step 3: Insert new data into a table using the `INSERT INTO` statement.
+     ```
+     sqlite> INSERT INTO customers (name, email) VALUES ('John Doe', 'john@example.com');
+     ```
+   - Step 4: Query specific data from a table using the `WHERE` clause and various operators such as `=`, `<`, `>`, etc.
+     ```
+     sqlite> SELECT * FROM customers WHERE name = 'John Doe';
+     ```
+   - Step 5: Perform join operations to combine data from multiple tables based on common columns.
+     ```
+     sqlite> SELECT customers.name, order_items.quantity FROM customers JOIN order_items ON customers.id = order_items.customer_id WHERE order_items.product_id = 1;
+     ```
 
    ---
 
    ## Exercise
 
-   - 1. Create tables for customers, products, orders, and order items with given schema.
-     ```sql
-     CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, email TEXT, created_at DATETIME);
-     ...
+   - 1. Create a new customer named 'Alice' with the email address alice@example.com.
      ```
-
-   - 2. Insert data into the tables.
-     ```sql
-     INSERT INTO customers (name, email) VALUES ('John Doe', 'john@example.com');
-     ...
+     sqlite> INSERT INTO customers (name, email) VALUES ('Alice', 'alice@example.com');
      ```
-
-   - 3. Query data from the tables using SELECT statements and JOINs.
-     ```sql
-     SELECT customers.name, orders.order_date FROM customers INNER JOIN orders ON customers.id = orders.customer_id;
+   - 2. List all products and their current stock levels.
      ```
-
-   - 4. Use aggregate functions to analyze data.
-     ```sql
-     SELECT SUM(order_items.quantity) FROM order_items GROUP BY order_items.order_id;
+     sqlite> SELECT * FROM products;
      ```
-
-   - 5. Write a query to find the customer with the most orders.
-     ```sql
-     SELECT customers.name, COUNT(orders.id) as num_of_orders FROM customers INNER JOIN orders ON customers.id = orders.customer_id GROUP BY customers.name ORDER BY num_of_orders DESC LIMIT 1;
+   - 3. Find the total number of orders for a specific customer.
+     ```
+     sqlite> SELECT COUNT(*) FROM orders WHERE customer_id = (SELECT id FROM customers WHERE name = 'John Doe');
+     ```
+   - 4. Query the order details for a specific order, including the items and their quantities.
+     ```
+     sqlite> SELECT * FROM order_items JOIN orders ON order_items.order_id = orders.id WHERE orders.customer_id = (SELECT id FROM customers WHERE name = 'John Doe');
+     ```
+   - 5. Update the stock level of a product by its ID and add the quantity purchased in an order.
+     ```
+     sqlite> UPDATE products SET stock = stock + 10 WHERE id = 1;
      ```
 
    ---
 
    ## Summary
 
-   | Topic                      | Description                                           |
-   |----------------------------|-------------------------------------------------------|
-   | Tables                     | Create, manage tables for customers, products, orders, order items.         |
-   | Data management            | Insert, update, delete data in the tables.             |
-   | Querying data             | Use SELECT statements to retrieve data from tables.  |
-   | JOINs                      | Combine data from multiple tables using JOIN statements.               |
-   | Aggregate functions        | Analyze data using aggregate functions like SUM, AVG, COUNT.          |
+   | Topic                    | Description                                                                        |
+   |--------------------------|------------------------------------------------------------------------------------|
+   | Creating a new database   | Using the `sqlite3` command-line tool to create a new SQLite database.             |
+   | Listing table contents   | Utilizing the `SELECT` statement to list data from a specific table.              |
+   | Inserting data            | Adding new rows of data into a table with the `INSERT INTO` statement.           |
+   | Querying data            | Filtering and selecting specific data using the `WHERE`, `=`, `<`, `>` operators, etc.|
+   | Joining tables            | Combining data from multiple tables based on common columns.                       |
+   | Updating data             | Modifying existing rows of data with the `UPDATE` statement.                      |
 
    ---
 
    ## SQLite vs SQL
 
-   |                           | SQLite                    | SQL (MySQL, PostgreSQL) |
-   |---------------------------|---------------------------|-------------------------|
-   | File-based                | Yes                       | No (uses server)        |
-   | Server                    | Not required              | Required                |
-   | Installation              | Easier                    | More complex           |
-   | Concurrency               | Limited                   | High                    |
-   | Embedded in applications   | Common                    | Rarely used            |
-
+   | Criteria          | SQLite                | SQL (MySQL, PostgreSQL)            |
+   |-------------------|-----------------------|------------------------------------|
+   | Embeddable         | Yes                    | No (Requires separate installation) |
+   | ACID Compliance    | Yes                    | Yes                                |
+   | Concurrent Access  | Limited               | Supports multi-user access          |
+   | File Format        | Single file            | Database server with multiple files |
    ```
