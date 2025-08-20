@@ -1,111 +1,101 @@
-# SQL
+# SQL with SQLite
 
-   - **SQL** stands for Structured Query Language, a standard language used to communicate with and manipulate databases.
+   - Learn how to work with SQL using SQLite locally. This tutorial will focus on creating, querying, and managing a simple database.
 
    ## Goal of this lesson:
 
-   - Understand the basics of SQL syntax
-   - Learn how to create, read, update, and delete data in SQLite database
-   - Get familiar with SQLite's default database structure and relationships
+   - Understand basic SQL syntax
+   - Create tables and manage data in SQLite
+   - Query data from created tables
+   - Understand relationships between tables
 
    ---
 
    ## Use the default demo.db
 
-   The `demo.db` is a pre-populated SQLite database used for demonstration purposes. It consists of the following tables:
+   - This tutorial uses the `demo.db` SQLite database for practical examples. It has four main tables: customers, products, orders, and order_items.
+     - customers: `id`, `name`, `email`, `created_at`
+     - products: `id`, `name`, `price`, `stock`
+     * orders: `id`, `customer_id` (references customers), `order_date`
+     * order_items: `id`, `order_id` (references orders), `product_id` (references products), `quantity`, `price`
+   - A **customer** has many **orders**. An **order** has many **items**. Each **item** belongs to one **product**.
+   - Visualize relationships with mermaid.js:
 
-   - **customers**: `id`, `name`, `email`, `created_at`
-   - **products**: `id`, `name`, `price`, `stock`
-   * **orders**: `id`, `customer_id` (references customers), `order_date`
-   * **order_items**: `id`, `order_id` (references orders), `product_id` (references products), `quantity`, `price`
-
-   - A **customer** has many **orders**
-   - An **order** has many **items**
-   - Each **item** belongs to one **product**
-
-   ![Database diagram](https://example.com/diagram.png)
-   > Note: The above is an example mermaid.js visualization of the database structure, you can create your own using mermaid.js.
+      ```mermaid
+      erDiagram
+        Customer ||--o{ Order : has_one
+        Order ||--|{ OrderItem : has_many
+        Product ||--|{ OrderItem : belongs_to
+      ```
 
    ---
 
    ## How it works
 
-   - **Step 1:** Establish a connection to the SQLite database
-     ```sql
-     sqlite3 demo.db
-     ```
-   - **Step 2:** Run queries to perform CRUD operations (Create, Read, Update, Delete) on the tables
-     ```sql
-     -- Create a new customer
-     INSERT INTO customers VALUES (NULL, 'John Doe', '[john.doe@example.com](mailto:john.doe@example.com)', '2023-03-16');
-
-     -- Read data from the customers table
-     SELECT * FROM customers;
-     ```
-   - **Step 3:** Update existing data in a table
-     ```sql
-     -- Update a customer's email
-     UPDATE customers SET email = 'john.doe@example.com' WHERE name = 'John Doe';
-     ```
-   - **Step 4:** Delete data from a table
-     ```sql
-     -- Delete a specific customer
-     DELETE FROM customers WHERE name = 'John Doe';
-     ```
-   - **Step 5:** Commit the changes and close the connection to the database
-     ```sql
-     .quit
-     ```
+   - Start by creating tables for customers, products, orders, and order items.
+   - Insert data into the tables.
+   - Query the data from the tables using SELECT statements.
+     - Filter results with WHERE clause.
+     - Sort results with ORDER BY clause.
+     - Limit the number of rows returned with LIMIT clause.
+   - Learn about JOIN statements to combine data from multiple tables.
+     - INNER JOIN to return only matching rows.
+     - LEFT JOIN to return all left-table rows, even if there are no matching right-table rows.
+   - Use aggregate functions like SUM, AVG, COUNT, and GROUP BY to analyze data.
 
    ---
 
    ## Exercise
 
-   1. Create a new customer with the name 'Alice' and email 'alice@example.com'.
-      ```sql
-      -- Your code here
-      ```
+   - 1. Create tables for customers, products, orders, and order items with given schema.
+     ```sql
+     CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, email TEXT, created_at DATETIME);
+     ...
+     ```
 
-   2. Read all customers from the database.
-      ```sql
-      -- Your code here
-      ```
+   - 2. Insert data into the tables.
+     ```sql
+     INSERT INTO customers (name, email) VALUES ('John Doe', 'john@example.com');
+     ...
+     ```
 
-   3. Update Alice's email to 'alice_new@example.com'.
-      ```sql
-      -- Your code here
-      ```
+   - 3. Query data from the tables using SELECT statements and JOINs.
+     ```sql
+     SELECT customers.name, orders.order_date FROM customers INNER JOIN orders ON customers.id = orders.customer_id;
+     ```
 
-   4. Delete the customer with the name 'Alice_new'.
-      ```sql
-      -- Your code here
-      ```
+   - 4. Use aggregate functions to analyze data.
+     ```sql
+     SELECT SUM(order_items.quantity) FROM order_items GROUP BY order_items.order_id;
+     ```
 
-   5. Create a new product named 'Laptop' priced at 1000 and stocked with 5 units.
-      ```sql
-      -- Your code here
-      ```
+   - 5. Write a query to find the customer with the most orders.
+     ```sql
+     SELECT customers.name, COUNT(orders.id) as num_of_orders FROM customers INNER JOIN orders ON customers.id = orders.customer_id GROUP BY customers.name ORDER BY num_of_orders DESC LIMIT 1;
+     ```
 
    ---
 
    ## Summary
 
-   | Topic                      | Description                              |
-   |----------------------------|------------------------------------------|
-   | **SQL**                    | Structured Query Language for databases  |
-   | **CRUD Operations**        | Create, Read, Update, Delete data         |
-   | **demo.db**                | Pre-populated SQLite database             |
-   | **customers**, **products** | Tables in the demo.db                      |
-   | **orders**, **order_items** | Relationships between tables              |
+   | Topic                      | Description                                           |
+   |----------------------------|-------------------------------------------------------|
+   | Tables                     | Create, manage tables for customers, products, orders, order items.         |
+   | Data management            | Insert, update, delete data in the tables.             |
+   | Querying data             | Use SELECT statements to retrieve data from tables.  |
+   | JOINs                      | Combine data from multiple tables using JOIN statements.               |
+   | Aggregate functions        | Analyze data using aggregate functions like SUM, AVG, COUNT.          |
 
    ---
 
    ## SQLite vs SQL
 
-   | Feature                | SQLite                             | SQL (MySQL, PostgreSQL)           |
-   |------------------------|-----------------------------------|----------------------------------|
-   | **Local storage**      | Yes                                | Needs a server to store data       |
-   | **Default database name**    | demo.db                            | N/A                              |
-   | **ACID compliance**   | Yes (ATOMIC, CONSISTENCY, ISOLATION, DURABILITY) | Yes                                |
-   | **Support for triggers**| Limited                            | Full support                      |
+   |                           | SQLite                    | SQL (MySQL, PostgreSQL) |
+   |---------------------------|---------------------------|-------------------------|
+   | File-based                | Yes                       | No (uses server)        |
+   | Server                    | Not required              | Required                |
+   | Installation              | Easier                    | More complex           |
+   | Concurrency               | Limited                   | High                    |
+   | Embedded in applications   | Common                    | Rarely used            |
+
    ```

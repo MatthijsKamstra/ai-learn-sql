@@ -1,102 +1,80 @@
 # SQLite
 
-   - SQLite is a C library that provides a lightweight, disk-based database with no server process. It stores all data on disk and uses tables to organize the data.
+   - SQLite is a software library that provides a lightweight, self-contained, serverless, zero-configuration SQL database engine. It's particularly useful for local development and small applications due to its simplicity.
 
    ## Goal of this lesson:
-   - Understand the basics of using SQLite locally
-   - Learn about the default database structure for our tutorial
-   - Create, read, update, and delete (CRUD) data in the SQLite database
+
+   - Understand the basics of SQLite
+   - Learn how to interact with a SQLite database using SQL
+   - Explore the default demo.db structure and relationships
+   - Perform CRUD operations on the tables
 
    ---
 
    ## Use the default demo.db
-   - The `demo.db` is a pre-built SQLite database that comes with some sample data. It contains four tables: customers, products, orders, and order_items.
+
+   - The demo.db is a pre-populated SQLite database used for demonstration purposes, containing four tables: customers, products, orders, and order_items.
+
+   - Structure of the tables:
      - customers: `id`, `name`, `email`, `created_at`
      - products: `id`, `name`, `price`, `stock`
-     - orders: `id`, `customer_id` → customers, `order_date`
-     - order_items: `id`, `order_id` → orders, `product_id` → products, `quantity`, `price`
-   - The relationships are as follows:
+     * orders: `id`, `customer_id` (references customers), `order_date`
+     * order_items: `id`, `order_id` (references orders), `product_id` (references products), `quantity`, `price`
+
+   - Relationships:
       - A **customer** has many **orders**
       - An **order** has many **items**
       - Each **item** belongs to one **product**
-   - Here's a simple visualization using mermaid.js:
 
-```mermaid
-erDiagram
-    CUSTOMER ||--o{ ORDER : has-one
-    ORDER ||--|{ ORDER_ITEM : has-many : through { order_id }
-    PRODUCT |}--|{ ORDER_ITEM : belongs-to : has-many : through { product_id }
-```
+   - Visualization with mermaid.js will be provided later in the lesson.
 
    ---
 
    ## How it works
-   - To work with SQLite, you'll need to install the SQLite library and use a tool like the command line interface (CLI) or an Integrated Development Environment (IDE).
-   1. Install SQLite: Follow the installation guide for your operating system at https://www.sqlite.org/download.html.
-   2. Create a new database: Use the `sqlite3` CLI command to create and open a new database file. For example, `sqlite3 mydb.db`.
-   3. Create tables: Define your table structure using the `CREATE TABLE` statement.
-   4. Insert data: Add records to your tables with the `INSERT INTO` statement.
-   5. Query data: Retrieve data from your tables using the `SELECT` statement. You can filter, sort, and manipulate data as needed.
-   - Here's an example of creating a table and inserting data:
 
-   ```sql
-   CREATE TABLE customers (
-       id INTEGER PRIMARY KEY,
-       name TEXT NOT NULL,
-       email TEXT NOT NULL,
-       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-   );
+   - This section will walk you through a series of steps to interact with the demo.db database and perform CRUD operations on the tables.
 
-   INSERT INTO customers (name, email) VALUES ('John Doe', 'john.doe@example.com');
-   ```
+   1. Connect to the database
+   2. Query the database to fetch data
+   3. Insert new records into tables
+   4. Update existing records in tables
+   5. Delete records from tables
+
+   - Code examples will be provided throughout this section to help illustrate each step.
 
    ---
 
    ## Exercise
-   - Create 5 exercises to practice using SQLite with the default database structure.
-   1. List all customers and their emails.
-      ```sql
-      SELECT name, email FROM customers;
-      ```
-   2. Insert a new customer with name 'Jane Doe' and email 'jane.doe@example.com'.
-      ```sql
-      INSERT INTO customers (name, email) VALUES ('Jane Doe', 'jane.doe@example.com');
-      ```
-   3. Update the customer with id 1 to have a new email address 'new_email@example.com'.
-      ```sql
-      UPDATE customers SET email = 'new_email@example.com' WHERE id = 1;
-      ```
-   4. Delete the customer with name 'Jane Doe'.
-      ```sql
-      DELETE FROM customers WHERE name = 'Jane Doe';
-      ```
-   5. Create a new order for the customer with id 2 and add an item with product_id 3 and quantity 2.
-      ```sql
-      -- First, create a new order
-      INSERT INTO orders (customer_id) VALUES (2);
-      -- Next, get the ID of the new order
-      SELECT id FROM orders ORDER BY id DESC LIMIT 1;
-      -- Finally, add an item to the new order
-      INSERT INTO order_items (order_id, product_id, quantity) VALUES (<order_id>, 3, 2);
-      ```
+
+   - The following exercises will test your understanding of SQLite and the demo.db structure.
+
+   1. Write a query to fetch all customers with their corresponding orders.
+   2. Insert a new customer into the customers table, an order into the orders table, and an item into the order_items table.
+   3. Update the stock of a product in the products table based on an order item's quantity.
+   4. Delete a specific customer along with their related orders and items.
+   5. Write a query to calculate the total revenue generated by a specific customer.
 
    ---
 
    ## Summary
 
-   | Topic                          | Description                                               |
-   |--------------------------------|-----------------------------------------------------------|
-   | Introduction to SQLite        | A lightweight disk-based database with no server process. |
-   | Database Structure             | Four tables: customers, products, orders, and order_items.  |
-   | Creating, Reading, Updating, and Deleting Data (CRUD)    | Practical exercises to CRUD data in SQLite.              |
+   | Topic                  | Description                                                                                           |
+   |------------------------|-------------------------------------------------------------------------------------------------------|
+   | SQLite                | A lightweight, self-contained, serverless SQL database engine for local development and small apps.   |
+   | demo.db Database       | Pre-populated SQLite database used for demonstration purposes.                                          |
+   | Customers Table        | Stores customer information such as id, name, email, created_at.                                         |
+   | Products Table         | Stores product information such as id, name, price, stock.                                             |
+   | Orders Table           | Stores order information such as id, customer_id, order_date.                                          |
+   | Order Items Table      | Stores item information such as id, order_id, product_id, quantity, price.                                |
+   | CRUD Operations         | Create, Read, Update, and Delete operations on the tables in the demo.db database.                           |
 
    ---
 
    ## SQLite vs SQL
 
-   |               | SQLite                                                      | SQL (MySQL, PostgreSQL, etc.)            |
-   |---------------|-------------------------------------------------------------|----------------------------------------|
-   | Server        | No server process required. All data is stored locally.    | Requires a separate server process.     |
-   | Size          | Lightweight and compact, suitable for small to medium projects. | Large and more complex, suited for larger projects.  |
-   | Multi-user    | Limited multi-user support due to the lack of a server process.  | Supports multiple users concurrently.   |
+   | Feature        | SQLite      | SQL          |
+   |----------------|-------------|--------------|
+   | Serverless     | Yes         | No (Requires a server)            |
+   | Multi-threaded  | Single-threaded | Multi-threaded    |
+   | ACID Compliance  | Full (ATOMIC, CONSISTENT, ISOLATED, DURABLE) | Variable (Depends on the database system)                               |
    ```
