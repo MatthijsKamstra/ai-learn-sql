@@ -1,6 +1,5 @@
 <!-- docs/_sidebar.md -->
 
 - [Home](/)
-- Misc
-  - [VSCode](misc/vscode.md)
-- [TODO](TODO.md)
+- [SQL](01_intro/01_sql.md)
+- [SQLite](01_intro/02_sqlite.md)
