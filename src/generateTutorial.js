@@ -16,7 +16,7 @@ export async function generateTutorial(ollama, {
 	temperature = 0.7
 }) {
 	const prompt = buildPrompt(topic, template);
-	spinner.start(`Start "${topic}"`);
+	spinner.start(`Start generation tutorial "${topic}"`);
 	const userMsg = buildUserPrompt(topic, template);
 	const messages = [
 		{ role: 'system', content: SYSTEM_PROMPT },
@@ -27,7 +27,7 @@ export async function generateTutorial(ollama, {
 		messages,
 		temperature
 	});
-	spinner.succeed(`End "${topic}"`);
+	spinner.succeed(`End generation tutorial "${topic}"`);
 	const base = path.posix.basename(filePath);
 	const outputFilePath = path.join(outputDir, `${filePath}/${base}.md`);
 	await fs.mkdir(path.dirname(outputFilePath), { recursive: true });
