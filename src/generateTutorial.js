@@ -1,5 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { SYSTEM_PROMPT } from './config.js';
+import { buildUserPrompt } from './promptFiles.js';
 import { sanitizeContent } from './sanitizeContent.js';
 
 export async function generateTutorial(ollama, {
@@ -15,16 +17,19 @@ export async function generateTutorial(ollama, {
 }) {
 	const prompt = buildPrompt(topic, template);
 	spinner.start(`Start "${topic}"`);
+	const userMsg = buildUserPrompt(topic, template);
+	const messages = [
+		{ role: 'system', content: SYSTEM_PROMPT },
+		{ role: 'user', content: userMsg }
+	];
 	const response = await ollama.chat({
 		model,
-		messages: [
-			{ role: 'system', content: systemPrompt },
-			{ role: 'user', content: prompt }
-		],
+		messages,
 		temperature
 	});
 	spinner.succeed(`End "${topic}"`);
-	const outputFilePath = path.join(outputDir, `${filePath}.md`);
+	const base = path.posix.basename(filePath);
+	const outputFilePath = path.join(outputDir, `${filePath}/${base}.md`);
 	await fs.mkdir(path.dirname(outputFilePath), { recursive: true });
 	const cleaned = sanitizeContent(response.message.content);
 	await fs.writeFile(outputFilePath, cleaned, 'utf-8');

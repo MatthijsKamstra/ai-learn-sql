@@ -5,11 +5,23 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "cd src && node generate-tutorials.mjs",
+    "prebuild": "echo 'hello'",
+    "build": "npm run build:tutorials",
+    "build:all": "npm run build:tutorials && npm run build:db",
+    "build:db": "node src/db/db-setup.mjs",
+    "build:tutorials": "cd src && node index.mjs",
+    "docs": "npm run build",
+    "docs:remove": "find docs -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ollama",
+    "js",
+    "tutorials",
+    "SQLite",
+    "SQL"
+  ],
+  "author": "matthijskamstra",
   "license": "MIT",
   "dependencies": {
     "fs": "^0.0.1-security",
