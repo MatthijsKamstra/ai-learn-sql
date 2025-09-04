@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { SYSTEM_PROMPT } from './config.js';
-import { buildUserPrompt } from './promptFiles.js';
-import { sanitizeContent } from './sanitizeContent.js';
+import { buildUserPrompt } from './utils/promptFiles.js';
+import { sanitizeContent } from './utils/sanitizeContent.js';
 
 export async function generateTutorial(ollama, {
 	model,

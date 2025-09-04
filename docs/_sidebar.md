@@ -35,4 +35,4 @@
   - [json](06_advanced/08_json/08_json.md)
   - [export import sqlite](06_advanced/09_export_import/09_export_import.md)
 
-<!-- Generated at 2025-08-29T10:03:15.109Z -->
+<!-- Generated at 2025-08-29T10:33:20.306Z -->

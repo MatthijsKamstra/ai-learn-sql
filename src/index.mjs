@@ -6,7 +6,7 @@ import chapterList from './chapters.js';
 import { MODELNAME, OUTPUT_DIR, SYSTEM_PROMPT, TEMPLATE_FILE } from './config.js';
 import { generateSidebar } from './generateSidebar.js';
 import { generateTutorial } from './generateTutorial.js';
-import { buildUserPrompt } from './promptFiles.js';
+import { buildUserPrompt } from './utils/promptFiles.js';
 
 const ollama = new Ollama();
 

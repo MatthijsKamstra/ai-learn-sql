@@ -12,12 +12,12 @@ function read(p) {
 }
 
 export function getSystemPrompt() {
-  if (!_systemCache) _systemCache = read('prompts/system.md');
+  if (!_systemCache) _systemCache = read('../prompts/system.md');
   return _systemCache;
 }
 
 export function buildUserPrompt(topic, template) {
-  if (!_userTemplateCache) _userTemplateCache = read('prompts/user.md');
+  if (!_userTemplateCache) _userTemplateCache = read('../prompts/user.md');
   return _userTemplateCache
     .replace(/\$\{topic\}/g, topic)
     .replace(/\$\{template\}/g, template.trim())
